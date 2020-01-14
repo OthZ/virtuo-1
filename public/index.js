@@ -27,12 +27,12 @@ const cars = [{
 //The `commission` is updated from step 3
 //The `options` is useful for step 4
 const rentals = [{
-  'id': '893a04a3-e447-41fe-beec-9a6bfff6fdb4',
+  'id': 'a9c1b91b-5e3d-4cec-a3cb-ef7eebb4892e',
   'driver': {
     'firstName': 'Roman',
     'lastName': 'Frayssinet'
   },
-  'carId': 'f944a3ff-591b-4d5b-9b67-c7e08cba9791',
+  'carId': 'a9c1b91b-5e3d-4cec-a3cb-ef7eebb4892e',
   'pickupDate': '2020-01-02',
   'returnDate': '2020-01-02',
   'distance': 100,
@@ -73,6 +73,7 @@ const rentals = [{
   'carId': '4afcc3a2-bbf4-44e8-b739-0179a6cd8b7d',
   'pickupDate': '2019-12-01',
   'returnDate': '2019-12-15',
+  'distance': 100,
   'options': {
     'deductibleReduction': true
   },
@@ -160,3 +161,129 @@ const actors = [{
 console.log(cars);
 console.log(rentals);
 console.log(actors);
+
+
+//Part 1
+var rentdays = [];
+for(let index=0;index<3;index++)
+{
+  rentdays[index]=(1+(new Date(rentals[index].returnDate).getDate()-new Date(rentals[index].pickupDate).getDate()))
+}
+var timecomp = [];
+for(let index=0;index<3;index++)
+{
+  timecomp[index]=rentdays[index]*(cars[index].pricePerDay);
+}
+var dist = [];
+for(let index=0;index<3;index++)
+{
+  dist[index]=(rentals[index].distance)*(cars[index].pricePerKm);
+}
+var rentPrice=[]
+for(let index=0;index<3;index++)
+{
+  rentPrice[index]=timecomp[index]+dist[index];
+}
+console.log(rentPrice);
+
+//Part 2
+var rentPrice2 =[];
+for(let index=0;index<3;index++)
+{
+  if(rentdays[index]<=1)
+  {
+    rentPrice2[index]=rentPrice[index];
+  }
+  else if(rentdays[index]>1 && rentdays[index]<=4)
+  {
+    rentPrice2[index]=rentPrice[index]*0.9;
+  }
+  else if(rentdays[index]>4 && rentdays[index]<10)
+  {
+    rentPrice2[index]=rentPrice[index]*0.7;
+  }
+  else if(rentdays[index]>10)
+  {
+    rentPrice2[index]=rentPrice[index]*0.5;
+  }
+}
+console.log(rentPrice2);
+
+//Part 3
+var Commissiontab=[]
+for(let index=0;index<3;index++)
+{
+  Commissiontab[index]=rentPrice2[index]*0.3;
+}
+var Insurancetab=[]
+for(let index=0;index<3;index++)
+{
+  Insurancetab[index]=Commissiontab[index]/2;
+}
+var Treasurytab=[]
+for(let index=0;index<3;index++)
+{
+  Treasurytab[index]=rentdays[index];
+}
+var Virtuotab=[]
+for(let index=0;index<3;index++)
+{
+  Virtuotab[index]=Commissiontab[index] - Insurancetab[index] - Treasurytab[index];
+}
+for(let index=0;index<3;index++)
+{
+  rentals[index].commission.insurance=Insurancetab[index];
+  rentals[index].commission.treasury=Treasurytab[index];
+  rentals[index].commission.virtuo=Virtuotab[index];
+}
+for(let index=0;index<3;index++)
+{
+  console.log(rentals[index].commission);
+}
+
+//Part 4
+for(let index=0;index<3;index++)
+{
+  if(rentals[index].options.deductibleReduction)
+  {
+    rentals[index].price= rentPrice2[index]+ 4*rentdays[index];
+  }
+  else
+  {
+    rentals[index].price= rentPrice2[index]
+  }
+}
+for(let index=0;index<3;index++)
+{
+  console.log(rentals[index].price);
+}
+
+//Part 5
+for(let index=0;index<3;index++)
+{
+  if(actors[index].who="driver")
+  {
+    actors[index].payment.amount=rentals[index].price;
+  }
+  else if(actors[index].who="partner")
+  {
+    actors[index].payment.amount=rentPrice2[index]-Commissiontab[index];
+  }
+  else if(actors[index].who="insurance")
+  {
+    actors[index].payment.amount=Insurancetab[index];
+  }
+  else if(actors[index].who="treasury")
+  {
+    actors[index].payment.amount=Treasurytab[index];
+  }
+  else if(actors[index].who="virtuo")
+  {
+    actors[index].payment.amount=Virtuotab[index];
+  }
+}
+for(let index=0;index<3;index++)
+{
+  console.log(actors[index].amount);
+}
+
